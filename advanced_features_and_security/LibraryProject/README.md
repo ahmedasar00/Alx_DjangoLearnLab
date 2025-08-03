@@ -1,9 +1,35 @@
-# Documentation (README.md or in comments)
-# Permissions and Groups Setup Guide:
-# 1. Add custom permissions to models using the Meta class.
-# 2. Create groups (Editors, Viewers, Admins) in Django Admin.
-# 3. Assign permissions (can_view, can_create, can_edit, can_delete) to groups in the admin interface.
-# 4. Use @permission_required decorator in views to enforce permissions.
-# 5. Test by creating test users, assigning them to groups, and verifying access to views.
+# Permissions and Groups Setup
 
-# To test, create users in the admin panel, assign them to groups, and try accessing views.
+This application implements custom permissions and groups to control access to the `Article` model.
+
+## Custom Permissions
+
+The `Article` model defines the following permissions:
+
+- `can_view`: Can view article
+- `can_create`: Can create article
+- `can_edit`: Can edit article
+- `can_delete`: Can delete article
+
+Defined in `models.py` under the `Meta` class.
+
+## Groups and Permissions
+
+Three groups are configured in the Django admin:
+
+- **Viewers**: Has `can_view` permission.
+- **Editors**: Has `can_view`, `can_create`, and `can_edit` permissions.
+- **Admins**: Has all permissions including `can_delete`.
+
+## Views and Permission Enforcement
+
+In `views.py`, Django's `@permission_required` decorator is used to protect views:
+
+- `article_list`: Requires `can_view`
+- `article_create`: Requires `can_create`
+- `article_edit`: Requires `can_edit`
+- `article_delete`: Requires `can_delete`
+
+## Testing
+
+Permissions are tested manually by assigning users to different groups via the Django admin interface, and verifying their access.
