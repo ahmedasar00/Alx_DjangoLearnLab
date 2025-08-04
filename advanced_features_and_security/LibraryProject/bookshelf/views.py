@@ -2,8 +2,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Article,Book
-from .forms import BookSearchForm
-
+from .forms import BookSearchForm, ExampleForm
 
 
 #! Task one ----> Permission
@@ -49,12 +48,15 @@ def article_delete(request, article_id):
     return render(request, 'article_confirm_delete.html', {'article': article})
 
 #! Task2 ----> permission
-def Book_list(request):
+
+
+def book_list(request):
     form = BookSearchForm(request.GET or None)
     books = Book.objects.all()
+    
     if form.is_valid():
         title = form.cleaned_data.get('title')
         if title:
             books = books.filter(title__icontains=title)
-    return render(request, 'bookshelf/book_list.html', {'form': form, 'books': books})
     
+    return render(request, 'bookshelf/book_list.html', {'form': form, 'books': books})
