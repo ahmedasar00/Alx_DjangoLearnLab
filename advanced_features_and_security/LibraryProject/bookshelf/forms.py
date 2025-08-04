@@ -1,9 +1,14 @@
 from django import forms
-from .forms import ExampleForm
 
+class ExampleForm(forms.Form):
+    # Example fields
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)
 
-class BookSearchForm(forms.Form):
-    title = forms.CharField(max_length=200, required=False)
-    author = forms.CharField(max_length=100, required=False)
-    
-    
+    def clean_message(self):
+        # Custom validation
+        data = self.cleaned_data['message']
+        if len(data) < 10:
+            raise forms.ValidationError("Message is too short!")
+        return data

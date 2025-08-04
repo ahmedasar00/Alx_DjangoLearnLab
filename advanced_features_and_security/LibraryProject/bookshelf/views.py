@@ -47,16 +47,22 @@ def article_delete(request, article_id):
         return render(request, 'article_list.html')
     return render(request, 'article_confirm_delete.html', {'article': article})
 
-#! Task2 ----> permission
+#! Task2 ----> 
 
+def contact_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            # You could save this data or send an email, etc.
+        else:
+            # Handle form errors
+            return render(request, 'bookshelf/form_example.html', {'form': form})
 
-def book_list(request):
-    form = BookSearchForm(request.GET or None)
-    books = Book.objects.all()
-    
-    if form.is_valid():
-        title = form.cleaned_data.get('title')
-        if title:
-            books = books.filter(title__icontains=title)
-    
-    return render(request, 'bookshelf/book_list.html', {'form': form, 'books': books})
+    else:
+        form = ExampleForm()
+
+    return render(request, 'bookshelf/form_example.html', {'form': form})
