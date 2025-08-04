@@ -7,15 +7,19 @@ from .forms import ExampleForm
 
 #! Task2 ----> 
 
+
 def search_books(request):
-    form = ExampleForm(request.GET)
+    form = BookSearchForm(request.GET)
     books = []
+
     if form.is_valid():
-        query = form.cleaned_data['query']
-        books = Book.objects.filter(title__icontains=query)  # Safe query using ORM
-    return render(request, 'bookshelf/search_results.html', {'form': form, 'books': books})
+        title = form.cleaned_data.get('title', '')
+        books = Book.objects.filter(title__icontains=title)
 
-
+    return render(request, 'bookshelf/search_results.html', {
+        'form': form,
+        'books': books
+    })
 #! Task one ----> Permission
 
 def book_list(request):
