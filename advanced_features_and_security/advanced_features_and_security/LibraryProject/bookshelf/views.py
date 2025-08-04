@@ -5,18 +5,26 @@ from .models import Article,Book
 from .forms import BookSearchForm, ExampleForm
 
 #! Task2 ----> 
-def book_list(request):
 
-    form = BookSearchForm(request.GET or None)
-    books = Book.objects.all()
-    if form.is_valid():
-        title = form.cleaned_data.get('title')
-        if title:
-            books = books.filter(title__icontains=title)
-    return render(request, 'bookshelf/book_list.html', {'form': form, 'books': books})
+def contact_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            # You could save this data or send an email, etc.
+        else:
+            # Handle form errors
+            return render(request, 'bookshelf/form_example.html', {'form': form})
+
+    else:
+        form = ExampleForm()
+
+    return render(request, 'bookshelf/form_example.html', {'form': form})
 
 
-    return render(request, 'bookshelf/book_list.html', {'form': form, 'books': books})
 #! Task one ----> Permission
 
 def book_list(request):
