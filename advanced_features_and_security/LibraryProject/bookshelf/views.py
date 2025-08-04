@@ -2,7 +2,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Article,Book
-from .forms import BookSearchForm, ExampleForm
+from .forms import BookSearchForm
+from .forms import ExampleForm
 
 #! Task2 ----> 
 
