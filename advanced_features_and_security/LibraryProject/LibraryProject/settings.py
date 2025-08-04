@@ -25,7 +25,25 @@ SECRET_KEY = "django-insecure-0^=a-rn)z-5*=yo!cvcw)8#u8rg5+pd1g#lt=+8a)uni6vc*@m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+# Secure cookies
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+
+# Browser security headers
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
 ALLOWED_HOSTS = []
+
+
+CSP_DEFAULT_SRC = ("'self'",) 
+CSP_SCRIPT_SRC = ("'self'", "https://cdnjs.cloudflare.com")  
+CSP_STYLE_SRC = ("'self'", "https://fonts.googleapis.com")  
+CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")      
+
 
 
 # Application definition

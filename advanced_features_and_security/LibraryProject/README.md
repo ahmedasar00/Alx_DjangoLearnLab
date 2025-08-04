@@ -33,3 +33,35 @@ In `views.py`, Django's `@permission_required` decorator is used to protect view
 ## Testing
 
 Permissions are tested manually by assigning users to different groups via the Django admin interface, and verifying their access.
+
+
+
+
+# Security Enhancements Documentation
+
+## Configured Django Security Settings:
+- DEBUG = False
+- SECURE_BROWSER_XSS_FILTER = True
+- SECURE_CONTENT_TYPE_NOSNIFF = True
+- X_FRAME_OPTIONS = 'DENY'
+- CSRF_COOKIE_SECURE = True
+- SESSION_COOKIE_SECURE = True
+
+## Views Security:
+- All views require login and appropriate permissions.
+- All POST forms use {% csrf_token %} to prevent CSRF.
+- SQL queries are handled via Django ORM to prevent SQL injection.
+
+## CSP:
+- Implemented CSP headers using django-csp:
+  - CSP_DEFAULT_SRC = ('self',)
+  - CSP_SCRIPT_SRC = ('self', 'https://cdnjs.cloudflare.com')
+  - CSP_STYLE_SRC = ('self', 'https://fonts.googleapis.com')
+
+## Input Validation:
+- All user inputs validated via Django forms (e.g., BookSearchForm).
+
+## Manual Testing Done:
+- CSRF token present in all forms.
+- XSS tested with `<script>` injection.
+- SQL injection attempts blocked via ORM.
