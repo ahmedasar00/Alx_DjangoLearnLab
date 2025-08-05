@@ -2,24 +2,29 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Article,Book
-from .forms import BookSearchForm
-from .forms import ExampleForm
+from .forms import BookSearchForm, ExampleForm
 
 #! Task2 ----> 
 
+def contact_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            # You could save this data or send an email, etc.
+        else:
+            # Handle form errors
+            return render(request, 'bookshelf/form_example.html', {'form': form})
 
-def search_books(request):
-    form = BookSearchForm(request.GET)
-    books = []
+    else:
+        form = ExampleForm()
 
-    if form.is_valid():
-        title = form.cleaned_data.get('title', '')
-        books = Book.objects.filter(title__icontains=title)
+    return render(request, 'bookshelf/form_example.html', {'form': form})
 
-    return render(request, 'bookshelf/search_results.html', {
-        'form': form,
-        'books': books
-    })
+
 #! Task one ----> Permission
 
 def book_list(request):

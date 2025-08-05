@@ -1,12 +1,16 @@
+# LibraryProject/bookshelf/forms.py
+
 from django import forms
-from bookshelf.models import Book
 
 class ExampleForm(forms.Form):
-    query = forms.CharField(max_length=100, required=True)  # Validates user input
-class BookForm(forms.ModelForm):
-    class Meta:
-        model = Book
-        fields = ['title', 'author', 'publication_date']
-        widgets = {
-            'publication_date': forms.DateInput(attrs={'type': 'date'}),
-        }
+    # Example fields
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)
+
+    def clean_message(self):
+        # Custom validation
+        data = self.cleaned_data['message']
+        if len(data) < 10:
+            raise forms.ValidationError("Message is too short!")
+        return data
