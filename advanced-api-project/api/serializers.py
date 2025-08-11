@@ -12,7 +12,7 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ['id', 'title', 'publication_year', 'author']
-        read_only_fields = ['author'] # The author is set when creating the book via the AuthorSerializer
+        read_only_fields = ['author'] # The azuthor is set when creating the book via the AuthorSerializer
 
     def validate_publication_year(self, value):
         """
