@@ -4,6 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import CustomUserCreationForm
+from .models import Post
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
+
 
 def register(request):
     if request.method == 'POST':
@@ -45,3 +50,41 @@ def profile(request):
         messages.success(request, 'profile updated successfully!')
         return redirect('profile')
     return render(request, 'blog/profile.html')
+
+
+
+
+class PostListView(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'
+    context_object_name='posts'
+    
+class PostDetailView(DeleteView):
+    model = Post 
+    template_name = 'blog/post_detail.html'
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    fields = ['title', 'content']
+    template_name = 'blog/post_form.html'
+    
+    def form_vaild (self, form):
+        form.instance.author = self.request.user
+        return super().form_vaild(form)    
+    
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    fields = ['title', 'content']
+    template_name = 'blog/post_form.html'
+    
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
+    
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model= Post
+    template_name = 'blog/post_confirm_delete.html'
+    success_url = '/posts'
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
