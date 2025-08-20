@@ -57,7 +57,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
+        'APP_DIRS': True, 
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -72,12 +72,12 @@ TEMPLATES = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+
+
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "blog" / "static",
 ]
-
 
 WSGI_APPLICATION = 'django_blog.wsgi.application'
 
@@ -139,5 +139,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-LOGIN_REDIRECT_URL = 'profile' 
+LOGIN_REDIRECT_URL = 'post-list' 
 LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = '/login/'
