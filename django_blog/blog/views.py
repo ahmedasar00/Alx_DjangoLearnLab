@@ -16,7 +16,7 @@ def register(request):
             return redirect('profile')
     else:
         form = CustomUserCreationForm()
-    return render(request,'registration/register.html', {'form':form})
+    return render(request,'blog/register.html', {'form':form})
 
 def user_login(request):
     if request.method == 'POST':
@@ -28,7 +28,7 @@ def user_login(request):
             return redirect('porfile')
         else:
             messages.error(request, 'Invalid username or password.')
-    return render(request, 'registration/login.html')
+    return render(request, 'blog/login.html')
 
 def user_logout(request):
     logout(request)
@@ -44,4 +44,4 @@ def profile(request):
         request.user.save()
         messages.success(request, 'profile updated successfully!')
         return redirect('profile')
-    return render(request, 'registration/profile.html')
+    return render(request, 'blog/profile.html')
