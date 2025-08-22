@@ -38,9 +38,15 @@ class PostForm(forms.ModelForm):
     Form for creating or updating a blog post.
     Maps to the Post model with title and content fields.
     """
+    tags = forms.CharField(
+        max_length=255,
+        required=False,
+        help_text='Enter comma-separated tags (e.g., python, django, webdev)'
+    )    
+    
     class Meta:
         model = Post
-        fields = ['title', 'content']
+        fields = ['title', 'content','tags']
 
 
 class CommentForm(forms.ModelForm):
@@ -51,7 +57,17 @@ class CommentForm(forms.ModelForm):
     """
     class Meta:
         model = Comment 
-        fields = ['content']   # fixed typo here
+        fields = ['content']
         widgets = {
             'content': forms.Textarea(attrs={'rows': 5}),
         }
+
+class SearchForm(forms.Form):
+    """
+    A simple form for handling search queries.
+    """
+    query = forms.CharField(
+        label='Search',
+        max_length=100,
+        widget=forms.TextInput(attrs={'placeholder': 'Search posts...'})
+    )
