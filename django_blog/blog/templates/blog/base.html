@@ -11,13 +11,13 @@
     <header>
       <nav>
         <ul>
-          <li><a href="{% url 'post-list' %}">Home</a></li>
-          <li><a href="{% url 'post-list' %}">Blog Posts</a></li>
+          <li><a href="{% url 'blog:post-list' %}">Home</a></li>
+          <li><a href="{% url 'blog:post-list' %}">Blog Posts</a></li>
           {% if user.is_authenticated %}
-          <li><a href="{% url 'logout' %}">Logout</a></li>
+          <li><a href="{% url 'blog:logout' %}">Logout</a></li>
           {% else %}
-          <li><a href="{% url 'login' %}">Login</a></li>
-          <li><a href="{% url 'register' %}">Register</a></li>
+          <li><a href="{% url 'blog:login' %}">Login</a></li>
+          <li><a href="{% url 'blog:register' %}">Register</a></li>
           {% endif %}
         </ul>
       </nav>

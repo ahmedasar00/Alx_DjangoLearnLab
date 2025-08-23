@@ -1,39 +1,41 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>User Profile</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-</head>
-<body>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+  </head>
+  <body>
     <div class="container">
-        <h2>User Profile</h2>
-        
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-        
-        <div class="profile-info">
-            <p><strong>Username:</strong> {{ user.username }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
+      <h2>User Profile</h2>
+
+      {% if messages %} {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %} {% endif %}
+
+      <div class="profile-info">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+      </div>
+
+      <h3>Update Profile</h3>
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value="{{ user.email }}"
+            required
+          />
         </div>
-        
-        <h3>Update Profile</h3>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" value="{{ user.email }}" required>
-            </div>
-            <button type="submit">Update Profile</button>
-        </form>
-        
-        <div class="profile-actions">
-            <p><a href="{% url 'logout' %}">Logout</a></p>
-        </div>
+        <button type="submit">Update Profile</button>
+      </form>
+
+      <div class="profile-actions">
+        <p><a href="{% url 'blog:logout' %}">Logout</a></p>
+      </div>
     </div>
-</body>
+  </body>
 </html>

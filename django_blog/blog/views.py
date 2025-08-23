@@ -14,6 +14,8 @@ from django.views.generic import (
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.db.models import Q
+
+#! Import the Tag model for handling tags
 from taggit.models import Tag
 
 
@@ -26,7 +28,7 @@ def register(request):
             username = form.cleaned_data.get("username")
             messages.success(request, f"Account created for {username}!")
             login(request, user)
-            return redirect("profile")
+            return redirect("blog:profile")
     else:
         form = CustomUserCreationForm()
     return render(request, "blog/register.html", {"form": form})
@@ -39,7 +41,7 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect("porfile")
+            return redirect("blog:porfile")
         else:
             messages.error(request, "Invalid username or password.")
     return render(request, "blog/login.html")
@@ -48,7 +50,7 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     messages.info(request, "you have been logged out.")
-    return redirect("login")
+    return redirect("blog:login")
 
 
 @login_required
@@ -58,7 +60,7 @@ def profile(request):
         request.user.email = email
         request.user.save()
         messages.success(request, "profile updated successfully!")
-        return redirect("profile")
+        return redirect("blog:profile")
     return render(request, "blog/profile.html")
 
 
@@ -85,7 +87,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("post-detail", kwargs={"pk": self.object.pk})
+        return reverse_lazy("blog:post-detail", kwargs={"pk": self.object.pk})
 
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -99,7 +101,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user == post.author
 
     def get_success_url(self):
-        return reverse_lazy("post-detail", kwargs={"pk": self.object.pk})
+        return reverse_lazy("blog:post-detail", kwargs={"pk": self.object.pk})
 
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -139,7 +141,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("post-detail", kwargs={"pk": self.kwargs["post_pk"]})
+        return reverse_lazy("blog:post-detail", kwargs={"pk": self.kwargs["post_pk"]})
 
 
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

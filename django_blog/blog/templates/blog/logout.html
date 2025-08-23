@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Logged Out</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-</head>
-<body>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+  </head>
+  <body>
     <div class="container">
-        <h2>You have been logged out</h2>
-        <p>Thank you for visiting our blog.</p>
-        <p><a href="{% url 'login' %}">Click here to login again</a></p>
+      <h2>You have been logged out</h2>
+      <p>Thank you for visiting our blog.</p>
+      <p><a href="{% url 'blog:login' %}">Click here to login again</a></p>
     </div>
-</body>
+  </body>
 </html>

@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+app_name = "blog"
+
 urlpatterns = [
     # Authentication URLs
     path("register/", views.register, name="register"),
@@ -20,7 +22,7 @@ urlpatterns = [
         name="comment-list",
     ),
     path(
-        "post/<int:pk>/comments/new/",
+        "post/<int:post_pk>/comments/new/",
         views.CommentCreateView.as_view(),
         name="comment-create",
     ),
