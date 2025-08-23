@@ -34,4 +34,9 @@ urlpatterns = [
         views.CommentDeleteView.as_view(),
         name="comment-delete",
     ),
+    #! Added new URL patterns for tag filtering and search results
+    path(
+        "tag/<slug:tag_slug>/", views.PostListByTag.as_view(), name="post-list-by-tag"
+    ),
+    path("search/", views.SearchView.as_view(), name="search-results"),
 ]

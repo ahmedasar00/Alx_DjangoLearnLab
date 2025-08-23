@@ -1,0 +1,21 @@
+{% extends "blog/base.html" %} {% block content %}
+<h2 class="mb-4">Posts tagged with "{{ tag.name }}"</h2>
+
+{% for post in posts %}
+<div class="card mb-3">
+  <div class="card-body">
+    <h3 class="card-title">
+      <a href="{% url 'blog:post-detail' post.pk %}">{{ post.title }}</a>
+    </h3>
+    <p class="card-text text-muted">
+      by {{ post.author }} on {{ post.published_date|date:"F d, Y" }}
+    </p>
+    <p class="card-text">{{ post.content|truncatewords:40 }}</p>
+    <a href="{% url 'blog:post-detail' post.pk %}" class="btn btn-primary"
+      >Read More</a
+    >
+  </div>
+</div>
+{% empty %}
+<p>There are no posts for this tag yet.</p>
+{% endfor %} {% endblock %}

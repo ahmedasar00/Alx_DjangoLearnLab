@@ -1,3 +1,14 @@
 <h1>{{ post.title }}</h1>
 <p>{{ post.content }}</p>
 <p>By: {{ post.author }}</p>
+<hr />
+<p>
+  <strong>Tags:</strong>
+  {% for tag in object.tags.all %}
+  <a
+    href="{% url 'blog:post-list-by-tag' tag.slug %}"
+    class="badge bg-secondary text-decoration-none"
+    >{{ tag.name }}</a
+  >
+  {% empty %} No tags for this post. {% endfor %}
+</p>

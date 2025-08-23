@@ -13,14 +13,12 @@ from django.views.generic import (
 )
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
+from django.db.models import Q
+from taggit.models import Tag
 
 
+# No changes in user-related views
 def register(request):
-    """
-    Handle user registration.
-    - If POST: validate and create user, log them in, redirect to profile.
-    - If GET: show registration form.
-    """
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -35,12 +33,6 @@ def register(request):
 
 
 def user_login(request):
-    """
-    Handle user login.
-    - If POST: authenticate user and redirect to profile if valid.
-    - If invalid: show error message.
-    - If GET: render login page.
-    """
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
@@ -54,11 +46,6 @@ def user_login(request):
 
 
 def user_logout(request):
-    """
-    Handle user logout.
-    - Log out the current user.
-    - Redirect to login page with a message.
-    """
     logout(request)
     messages.info(request, "you have been logged out.")
     return redirect("login")
@@ -66,11 +53,6 @@ def user_logout(request):
 
 @login_required
 def profile(request):
-    """
-    Display and update user profile.
-    - On POST: update email and save.
-    - On GET: render profile page.
-    """
     if request.method == "POST":
         email = request.POST["email"]
         request.user.email = email
@@ -81,144 +63,146 @@ def profile(request):
 
 
 class PostListView(ListView):
-    """
-    Display a list of all blog posts.
-    """
-
     model = Post
     template_name = "blog/post_list.html"
     context_object_name = "posts"
+    ordering = ["-published_date"]
 
 
 class PostDetailView(DetailView):
-    """
-    Display details of a single blog post.
-    """
-
     model = Post
     template_name = "blog/post_detail.html"
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
-    """
-    Allow authenticated users to create a new post.
-    """
-
     model = Post
-    fields = ["title", "content"]
+    #! Modified fields to include tags
+    fields = ["title", "content", "tags"]
     template_name = "blog/post_form.html"
 
     def form_valid(self, form):
-        """Assign the logged-in user as the post author before saving."""
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+    def get_success_url(self):
+        return reverse_lazy("post-detail", kwargs={"pk": self.object.pk})
+
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    """
-    Allow the post author to update their post.
-    """
-
     model = Post
-    fields = ["title", "content"]
+    #! Modified fields to include tags
+    fields = ["title", "content", "tags"]
     template_name = "blog/post_form.html"
 
     def test_func(self):
-        """Ensure that only the post author can update."""
         post = self.get_object()
         return self.request.user == post.author
 
+    def get_success_url(self):
+        return reverse_lazy("post-detail", kwargs={"pk": self.object.pk})
+
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    """
-    Allow the post author to delete their post.
-    """
-
     model = Post
     template_name = "blog/post_confirm_delete.html"
-    success_url = "/posts"
+    success_url = reverse_lazy("post-list")
 
     def test_func(self):
-        """Ensure that only the post author can delete."""
         post = self.get_object()
         return self.request.user == post.author
 
 
 class CommentListView(ListView):
-    """
-    Display all comments related to a specific post.
-    """
-
     model = Comment
     template_name = "blog/comment_list.html"
     context_object_name = "comments"
 
     def get_queryset(self):
-        """Filter comments for the given post."""
         self.post = get_object_or_404(Post, pk=self.kwargs["post_pk"])
         return Comment.objects.filter(post=self.post)
 
     def get_context_data(self, **kwargs):
-        """Add the related post object to context."""
         context = super().get_context_data(**kwargs)
         context["post"] = self.post
         return context
 
 
 class CommentCreateView(LoginRequiredMixin, CreateView):
-    """
-    Allow authenticated users to add a new comment to a post.
-    """
-
     model = Comment
     form_class = CommentForm
     template_name = "blog/comment_form.html"
 
     def form_valid(self, form):
-        """Set the comment's post and author before saving."""
         post = get_object_or_404(Post, pk=self.kwargs["post_pk"])
         form.instance.post = post
         form.instance.author = self.request.user
         return super().form_valid(form)
 
     def get_success_url(self):
-        """Redirect back to the post detail page after comment creation."""
         return reverse_lazy("post-detail", kwargs={"pk": self.kwargs["post_pk"]})
 
 
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    """
-    Allow the comment author to update their comment.
-    """
-
     model = Comment
     form_class = CommentForm
     template_name = "blog/comment_form.html"
 
     def form_valid(self, form):
-        """Ensure the logged-in user remains the comment author."""
         form.instance.author = self.request.user
         return super().form_valid(form)
 
     def test_func(self):
-        """Only the comment's author can update it."""
         comment = self.get_object()
         return self.request.user == comment.author
 
 
 class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    """
-    Allow the comment author to delete their comment.
-    """
-
     model = Comment
     template_name = "blog/delete_comment.html"
 
     def get_success_url(self):
-        """Redirect back to the related post after comment deletion."""
         return self.object.post.get_absolute_url()
 
     def test_func(self):
-        """Only the comment's author can delete it."""
         comment = self.get_object()
         return self.request.user == comment.author
+
+
+class PostListByTag(ListView):
+    """View to list posts by a specific tag."""
+
+    model = Post
+    template_name = "blog/post_list_by_tag.html"
+    context_object_name = "posts"
+
+    def get_queryset(self):
+        self.tag = get_object_or_404(Tag, slug=self.kwargs.get("tag_slug"))
+        return Post.objects.filter(tags__in=[self.tag])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tag"] = self.tag
+        return context
+
+
+class SearchView(ListView):
+    """View to display search results."""
+
+    model = Post
+    template_name = "blog/search_results.html"
+    context_object_name = "posts"
+
+    def get_queryset(self):
+        query = self.request.GET.get("q")
+        if query:
+            return Post.objects.filter(
+                Q(title__icontains=query)
+                | Q(content__icontains=query)
+                | Q(tags__name__icontains=query)
+            ).distinct()
+        return Post.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["query"] = self.request.GET.get("q", "")
+        return context
