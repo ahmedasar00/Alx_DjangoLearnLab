@@ -168,7 +168,7 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == comment.author
 
 
-class PostListByTag(ListView):
+class PostByTagListView(ListView):
     """View to list posts by a specific tag."""
 
     model = Post

@@ -36,7 +36,9 @@ urlpatterns = [
     ),
     #! Added new URL patterns for tag filtering and search results
     path(
-        "tags/<slug:tag_slug>/", views.PostListByTag.as_view(), name="post-list-by-tag"
+        "tags/<slug:tag_slug>/",
+        views.PostByTagListView.as_view(),
+        name="post-list-by-tag",
     ),
     path("search/", views.SearchView.as_view(), name="search-results"),
 ]
