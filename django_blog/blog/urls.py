@@ -36,7 +36,9 @@ urlpatterns = [
         views.CommentDeleteView.as_view(),
         name="comment-delete",
     ),
-    #! Added new URL patterns for tag filtering and search results
+    #! Ad
+    # 
+    # ded new URL patterns for tag filtering and search results
     path(
         "tags/<slug:tag_slug>/",
         views.PostByTagListView.as_view(),
