@@ -2,147 +2,149 @@
 
 ## Overview
 
-This is a Social Media API built with Django and Django REST Framework.
-It provides user registration, login, profile management, and token-based authentication.
+This is a comprehensive RESTful API for a social media platform, built with Django and Django REST Framework. This backend service provides all the essential functionalities for a modern social network, including user authentication, profile management, a follow system, posts, comments, likes, and a real-time notification system.
+
+---
 
 ## Features
 
-- Custom user model (CustomerUserModel) with:
-  - username, email, password
-  - bio
-  - profile_picture
-  - followers (self-referential ManyToMany)
-- User registration and login with token authentication
-- Profile view and update for authenticated users
-- API using DRF serializers and routers
-
-## Installation
-
-# Social Media API - Posts & Comments Functionality
-
-## Overview
-
-The goal of this task is to **implement core social media features** by adding **Posts** and **Comments** functionalities to the existing `social_media_api` project.  
-This enables users to **create, view, update, and delete posts and comments**, providing essential interaction within the platform.
+- **User Authentication**: Secure user registration and login with token-based authentication.
+- **Profile Management**: Users can create and update their profiles with a bio and a profile picture.
+- **Social Graph**: A complete follow/unfollow system allowing users to connect with each other.
+- **Personalized Feed**: An aggregated feed that displays the latest posts from users that the current user follows.
+- **Post Management**: Full CRUD (Create, Read, Update, Delete) operations for posts.
+- **Commenting System**: Users can add, view, and manage comments on posts.
+- **Likes & Engagement**: Functionality for users to like and unlike posts.
+- **Notification System**: Users receive notifications for new followers, likes, and comments.
+- **API Enhancements**: Implements pagination for handling large datasets efficiently and filtering capabilities for posts.
+- **Production Ready**: Configured for deployment to a production environment.
 
 ---
 
-## Task Description
+## Getting Started
 
-Expand the `social_media_api` project by creating functionality for users to manage posts and engage with them through comments.
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
-This involves setting up:
+### Prerequisites
 
-- **Models**
-- **Serializers**
-- **Views**
-- **Routes (URLs)**
+- Python 3.8+
+- Pip
 
----
+### Installation
 
-## Implementation Steps
+1.  **Clone the repository:**
 
-### Step 1: Create Post and Comment Models
+    ```bash
+    git clone [https://github.com/your-username/Alx_DjangoLearnLab.git](https://github.com/your-username/Alx_DjangoLearnLab.git)
+    cd social_media_api
+    ```
 
-- Create a new app: `posts`
-- Define two models:
-  - **Post**
-    - `author` → ForeignKey to `User`
-    - `title` → CharField
-    - `content` → TextField
-    - `created_at`, `updated_at` → DateTime fields
-  - **Comment**
-    - `post` → ForeignKey to `Post`
-    - `author` → ForeignKey to `User`
-    - `content`
-    - `created_at`, `updated_at`
-- Run migrations:
-  ```bash
-  python manage.py makemigrations posts
-  python manage.py migrate
-  ```
+2.  **Create and activate a virtual environment:**
 
-# Social Media API - User Follows & Feed Functionality
+    ```bash
+    # For macOS/Linux
+    python3 -m venv venv
+    source venv/bin/activate
 
-## Objective
+    # For Windows
+    python -m venv venv
+    .\venv\Scripts\activate
+    ```
 
-The goal of this task is to **expand the social media features** by implementing:
+3.  **Install the required packages:**
 
-- **User follow/unfollow functionality**
-- **Aggregated feed of posts** from followed users
+    ```bash
+    pip install django djangorestframework
+    ```
 
-This enhances the social aspect of the platform, similar to popular social media networks.
+    _(Note: A `requirements.txt` file is recommended for a real project)_
 
----
+4.  **Apply the database migrations:**
 
-## Task Description
+    ```bash
+    python manage.py makemigrations
+    python manage.py migrate
+    ```
 
-Build on the existing `social_media_api` project by adding user relationships and a dynamic content feed.
-
-Key features include:
-
-- Managing **user follow relationships**
-- Creating a **feed view** that displays posts from users that a given user follows
+5.  **Run the development server:**
+    ```bash
+    python manage.py runserver
+    ```
+    The API will be available at `http://127.0.0.1:8000/`.
 
 ---
 
-## Implementation Steps
+## API Documentation
 
-### Step 1: Update User Model to Handle Follows
+All endpoints are prefixed with `/api/`. Authentication is required for most endpoints. Provide the token in the `Authorization` header as `Token <your_token>`.
 
-- Modify your **custom user model** (`CustomerUserModel`) to include:
-  - `following` → ManyToManyField to itself, representing users that a user follows
-- Run migrations to update the database:
+### 1. Authentication
 
-```bash
-python manage.py makemigrations accounts
-python manage.py migrate
-```
+| Method | Endpoint              | Description                                |
+| :----- | :-------------------- | :----------------------------------------- |
+| `POST` | `/accounts/register/` | Register a new user.                       |
+| `POST` | `/accounts/login/`    | Log in to receive an authentication token. |
+| `GET`  | `/accounts/profile/`  | View the authenticated user's profile.     |
+| `PUT`  | `/accounts/profile/`  | Update the authenticated user's profile.   |
 
-## Likes
+### 2. Users & Follows
 
-### Like a Post
+| Method | Endpoint                    | Description                                |
+| :----- | :-------------------------- | :----------------------------------------- |
+| `GET`  | `/users/`                   | Get a list of all users.                   |
+| `GET`  | `/users/<int:pk>/`          | Retrieve a specific user's profile.        |
+| `POST` | `/users/<int:pk>/follow/`   | Follow a user. (Requires authentication)   |
+| `POST` | `/users/<int:pk>/unfollow/` | Unfollow a user. (Requires authentication) |
 
-- **Endpoint**: `POST /api/posts/{id}/like/`
-- **Description**: Allows an authenticated user to like a post.
-- **Authentication**: Required (Token).
-- **Success Response**:
-  - **Code**: `201 CREATED`
-  - **Content**: `{"status": "post liked"}`
-- **Error Response**:
-  - **Code**: `400 Bad Request`
-  - **Content**: `{"detail": "You have already liked this post."}`
+### 3. Posts & Comments
+
+| Method   | Endpoint                    | Description                                  |
+| :------- | :-------------------------- | :------------------------------------------- |
+| `GET`    | `/posts/`                   | Get a list of all posts.                     |
+| `POST`   | `/posts/`                   | Create a new post. (Requires authentication) |
+| `GET`    | `/posts/<int:pk>/`          | Retrieve a specific post.                    |
+| `PUT`    | `/posts/<int:pk>/`          | Update a post. (Owner only)                  |
+| `DELETE` | `/posts/<int:pk>/`          | Delete a post. (Owner only)                  |
+| `GET`    | `/posts/<int:pk>/comments/` | List all comments for a specific post.       |
+| `POST`   | `/posts/<int:pk>/comments/` | Add a new comment to a post. (Requires auth) |
+
+### 4. Likes, Feed & Notifications
+
+| Method | Endpoint                | Description                                  |
+| :----- | :---------------------- | :------------------------------------------- |
+| `POST` | `/posts/<int:pk>/like/` | Like or unlike a post. (Requires auth)       |
+| `GET`  | `/feed/`                | Get the personalized feed of followed users. |
+| `GET`  | `/notifications/`       | Get a list of the user's notifications.      |
 
 ---
 
-### Unlike a Post
+## Deployment
 
-- **Endpoint**: `POST /api/posts/{id}/unlike/`
-- **Description**: Allows an authenticated user to remove their like from a post.
-- **Authentication**: Required (Token).
-- **Success Response**:
-  - **Code**: `204 NO CONTENT`
-- **Error Response**:
-  - **Code**: `400 Bad Request`
-  - **Content**: `{"detail": "You have not liked this post."}`
+To deploy this API to a production environment, follow these general steps:
+
+1.  **Production Settings:**
+
+    - In `settings.py`, set `DEBUG = False`.
+    - Configure `ALLOWED_HOSTS` with your domain name or server IP address.
+    - Set up a production-grade database like PostgreSQL.
+
+2.  **Web Server and WSGI:**
+
+    - Use a WSGI server, such as **Gunicorn**, to run the application.
+    - Use a reverse proxy, such as **Nginx**, to manage incoming HTTP requests, serve static files, and forward dynamic requests to Gunicorn.
+
+3.  **Static & Media Files:**
+
+    - Run `python manage.py collectstatic` to gather all static files into a single directory.
+    - Configure Nginx to serve the static files and user-uploaded media files directly.
+
+4.  **Environment Variables:**
+    - Store sensitive information like `SECRET_KEY`, database credentials, and other configurations in environment variables instead of hard-coding them.
 
 ---
 
-## Notifications
+## Technologies Used
 
-### List Notifications
-
-- **Endpoint**: `GET /api/notifications/`
-- **Description**: Retrieves a list of all notifications for the authenticated user, ordered from newest to oldest.
-- **Authentication**: Required (Token).
-- **Success Response**:
-  - **Code**: `200 OK`
-  - **Content**: A list of notification objects.
-
-### Mark All Notifications as Read
-
-- **Endpoint**: `POST /api/notifications/mark-all-as-read/`
-- **Description**: Marks all of the user's notifications as read.
-- **Authentication**: Required (Token).
-- **Success Response**:
-  - **Code**: `204 NO CONTENT`
+- **Backend:** Python, Django, Django REST Framework
+- **Database:** SQLite3 (development), PostgreSQL (production recommended)
+- **Authentication:** DRF Token Authentication
