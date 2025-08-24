@@ -28,7 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             bio=validated_data("bio"),
             profile_picture=validated_data("profile_picture"),
         )
-        Token.object.create(user=user)
+        Token.object.create()
         return user
 
 
