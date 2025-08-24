@@ -3,7 +3,7 @@ from .models import CustomerUserModel
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 
-UserModel = get_user_model()
+UserModel = get_user_model().objects.create_user
 
 
 class RegisterSerializer(serializers.ModelSerializer):
