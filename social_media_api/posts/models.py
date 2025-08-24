@@ -10,8 +10,8 @@ class Post(models.Model):
     )
     title = models.CharField(max_length=230)
     content = models.TextField()
-    created_at = models.DateField(default=timezone.now)
-    updated_at = models.DateField(auto_created=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_created=True)
 
     def __str__(self):
         return self.title
@@ -28,8 +28,8 @@ class Commment(models.Model):
 
     title = models.CharField(max_length=230)
     content = models.TextField()
-    created_at = models.DateField(default=timezone.now)
-    updated_at = models.DateField(auto_created=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_created=True)
 
     def __str__(self):
         return f"Comment by {self.author.username} on {self.Post.title}"
