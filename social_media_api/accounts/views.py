@@ -7,21 +7,19 @@ from .models import CustomerUserModel
 from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
 from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
+from notifications.models import Notification
 
-User = get_user_model()  # This gets your CustomerUserModel
+User = get_user_model()
 
 
 # User Registration
 class RegisterView(generics.CreateAPIView):
+    queryset = CustomerUserModel.objects.all()
     serializer_class = RegisterSerializer
 
-    def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
-        user = CustomerUserModel.objects.get(username=response.data["username"])
-        token = Token.objects.get(user=user)
-        return Response(
-            {"user": response.data, "token": token.key}, status=status.HTTP_201_CREATED
-        )
+    def perform_create(self, serializer):
+        user = serializer.save()
+        Token.objects.create(user=user)
 
 
 # User Login
@@ -74,6 +72,11 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             )
 
         current_user.following.add(user_to_follow)
+
+        Notification.objects.create(
+            recipient=user_to_follow, actor=current_user, verb="started following you"
+        )
+
         return Response(
             {"status": f"You are now following {user_to_follow.username}"},
             status=status.HTTP_200_OK,

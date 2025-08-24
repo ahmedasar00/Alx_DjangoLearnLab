@@ -61,3 +61,40 @@ This involves setting up:
   python manage.py makemigrations posts
   python manage.py migrate
   ```
+
+# Social Media API - User Follows & Feed Functionality
+
+## Objective
+
+The goal of this task is to **expand the social media features** by implementing:
+
+- **User follow/unfollow functionality**
+- **Aggregated feed of posts** from followed users
+
+This enhances the social aspect of the platform, similar to popular social media networks.
+
+---
+
+## Task Description
+
+Build on the existing `social_media_api` project by adding user relationships and a dynamic content feed.
+
+Key features include:
+
+- Managing **user follow relationships**
+- Creating a **feed view** that displays posts from users that a given user follows
+
+---
+
+## Implementation Steps
+
+### Step 1: Update User Model to Handle Follows
+
+- Modify your **custom user model** (`CustomerUserModel`) to include:
+  - `following` → ManyToManyField to itself, representing users that a user follows
+- Run migrations to update the database:
+
+```bash
+python manage.py makemigrations accounts
+python manage.py migrate
+```
