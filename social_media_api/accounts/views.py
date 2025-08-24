@@ -1,15 +1,11 @@
-from rest_framework import generics, status, viewsets
+from rest_framework import generics, status, viewsets, permissions
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticated
 from .models import CustomerUserModel
 from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
 from rest_framework.decorators import action
-from django.contrib.auth import get_user_model
 from notifications.models import Notification
-
-User = get_user_model()
 
 
 # User Registration
@@ -41,7 +37,7 @@ class LoginView(generics.GenericAPIView):
 # User Profile
 class ProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user
@@ -53,15 +49,12 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     Provides `list` and `retrieve` actions by default.
     """
 
-    queryset = User.objects.all()
+    queryset = CustomerUserModel.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=True, methods=["post"], url_path="follow")
     def follow(self, request, pk=None):
-        """
-        Action for the logged-in user to follow another user.
-        """
         user_to_follow = self.get_object()
         current_user = request.user
 
@@ -84,9 +77,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=["post"], url_path="unfollow")
     def unfollow(self, request, pk=None):
-        """
-        Action for the logged-in user to unfollow another user.
-        """
         user_to_unfollow = self.get_object()
         current_user = request.user
 
