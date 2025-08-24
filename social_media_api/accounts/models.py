@@ -7,7 +7,7 @@ class CustomerUserModel(AbstractUser):
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField("profile_picture/", blank=True, null=True)
 
-    followering = models.ManyToManyField(
+    following = models.ManyToManyField(
         "self", symmetrical=False, related_name="followers", blank=True
     )
 
