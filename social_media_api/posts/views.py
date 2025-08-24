@@ -1,18 +1,19 @@
-from django.shortcuts import render
 from rest_framework import viewsets, permissions, filters
 from .models import Post, Comment
 from .serializers import CommentSerializer, PostSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
-# Create your views here.
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by("created_at")
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["title", "content", "author__username"]
+    ordering_fields = ["created_at", "updated_at"]
 
-    def permission_create(self, serializers):
-        serializers.save(author=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -20,5 +21,5 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
-    def permission_create(self, serializers):
-        serializers.save(author=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)

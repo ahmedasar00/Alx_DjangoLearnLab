@@ -18,4 +18,46 @@ It provides user registration, login, profile management, and token-based authen
 
 ## Installation
 
-1. Clone the repository
+# Social Media API - Posts & Comments Functionality
+
+## Overview
+
+The goal of this task is to **implement core social media features** by adding **Posts** and **Comments** functionalities to the existing `social_media_api` project.  
+This enables users to **create, view, update, and delete posts and comments**, providing essential interaction within the platform.
+
+---
+
+## Task Description
+
+Expand the `social_media_api` project by creating functionality for users to manage posts and engage with them through comments.
+
+This involves setting up:
+
+- **Models**
+- **Serializers**
+- **Views**
+- **Routes (URLs)**
+
+---
+
+## Implementation Steps
+
+### Step 1: Create Post and Comment Models
+
+- Create a new app: `posts`
+- Define two models:
+  - **Post**
+    - `author` → ForeignKey to `User`
+    - `title` → CharField
+    - `content` → TextField
+    - `created_at`, `updated_at` → DateTime fields
+  - **Comment**
+    - `post` → ForeignKey to `Post`
+    - `author` → ForeignKey to `User`
+    - `content`
+    - `created_at`, `updated_at`
+- Run migrations:
+  ```bash
+  python manage.py makemigrations posts
+  python manage.py migrate
+  ```

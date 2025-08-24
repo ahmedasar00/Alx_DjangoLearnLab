@@ -1,8 +1,17 @@
 from rest_framework import permissions
+from rest_framework.exceptions import PermissionDenied
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
+    message = "You must be the owner of this object to edit or delete it."
+
     def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
+        if (
+            request.method in permissions.SAFE_METHODS
+        ):  # S AFE_METHODS = GET, HEAD, OPTINONS <==> Read_only
             return True
-        return obj.author == request.user
+        if (
+            obj.author == request.user
+        ):  # if request not read_only ===> eg: PUT, PATCH, DELETE ===> Cheak author
+            return True
+        raise PermissionDenied(self.message)

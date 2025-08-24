@@ -9,6 +9,9 @@ class CustomerUserModel(AbstractUser):
     followers = models.ManyToManyField(
         "self", symmetrical=False, related_name="following", blank=True
     )
+    followering = models.ManyToManyField(
+        "self", symmetrical=False, related_name="followers", blank=True
+    )
 
     def __str__(self):
         return self.username
