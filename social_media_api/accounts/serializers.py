@@ -1,39 +1,38 @@
 from rest_framework import serializers
-from .models import CustomerUserModel
 from django.contrib.auth import get_user_model
-from rest_framework.authtoken.models import Token
 
 UserModel = get_user_model()
-# .objects.create_user()
+# object.create_user()
 
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CustomerUserModel
+        model = UserModel
         fields = [
+            "id",
             "username",
             "email",
             "password",
             "bio",
             "profile_picture",
-            "followers",
         ]
+        extra_kwargs = {
+            "password": {"write_only": True},
+            "id": {"read_only": True},
+        }
 
-    extra_kwargs = {"password": {"write_only": True}, "id": {"read_only": True}}
-
-    def Create(self, validated_data):
+    def create(self, validated_data):
         user = UserModel.objects.create_user(
             username=validated_data["username"],
-            email=validated_data["email"],
+            email=validated_data.get("email", ""),
             password=validated_data["password"],
-            bio=validated_data("bio"),
-            profile_picture=validated_data("profile_picture"),
+            bio=validated_data.get("bio", ""),
+            profile_picture=validated_data.get("profile_picture", None),
         )
-        Token.object.create(user=user)
         return user
 
 
-class LoginSerializer(serializers.ModelSerializer):
+class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
 
@@ -41,4 +40,12 @@ class LoginSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ["id", "username", "eamil", "bio", "profile_picture", "followrs"]
+        fields = [
+            "id",
+            "username",
+            "email",
+            "bio",
+            "profile_picture",
+            "followers",
+            "following",
+        ]

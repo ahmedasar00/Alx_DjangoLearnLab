@@ -39,8 +39,4 @@ class Like(models.Model):
     post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="likes")
     create_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        unique_together = (
-            "user",
-            "post",
-        )  # Prevent multiple likes from the same user on one post
+    unique_together = ("user", "post")
