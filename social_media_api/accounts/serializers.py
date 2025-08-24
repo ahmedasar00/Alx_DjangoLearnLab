@@ -5,6 +5,8 @@ from rest_framework.authtoken.models import Token
 
 UserModel = get_user_model().objects.create_user()
 
+# .objects.create_user()
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:

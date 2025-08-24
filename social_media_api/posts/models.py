@@ -9,7 +9,7 @@ class Post(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts"
     )
     title = models.CharField(max_length=230)
-    content = models.CharField()
+    content = models.TextField()
     created_at = models.DateField(default=timezone.now)
     updated_at = models.DateField(auto_created=True)
 
@@ -27,7 +27,7 @@ class Commment(models.Model):
     )
 
     title = models.CharField(max_length=230)
-    content = models.CharField()
+    content = models.TextField()
     created_at = models.DateField(default=timezone.now)
     updated_at = models.DateField(auto_created=True)
 
