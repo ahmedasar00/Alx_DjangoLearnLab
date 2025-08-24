@@ -98,3 +98,51 @@ Key features include:
 python manage.py makemigrations accounts
 python manage.py migrate
 ```
+
+## Likes
+
+### Like a Post
+
+- **Endpoint**: `POST /api/posts/{id}/like/`
+- **Description**: Allows an authenticated user to like a post.
+- **Authentication**: Required (Token).
+- **Success Response**:
+  - **Code**: `201 CREATED`
+  - **Content**: `{"status": "post liked"}`
+- **Error Response**:
+  - **Code**: `400 Bad Request`
+  - **Content**: `{"detail": "You have already liked this post."}`
+
+---
+
+### Unlike a Post
+
+- **Endpoint**: `POST /api/posts/{id}/unlike/`
+- **Description**: Allows an authenticated user to remove their like from a post.
+- **Authentication**: Required (Token).
+- **Success Response**:
+  - **Code**: `204 NO CONTENT`
+- **Error Response**:
+  - **Code**: `400 Bad Request`
+  - **Content**: `{"detail": "You have not liked this post."}`
+
+---
+
+## Notifications
+
+### List Notifications
+
+- **Endpoint**: `GET /api/notifications/`
+- **Description**: Retrieves a list of all notifications for the authenticated user, ordered from newest to oldest.
+- **Authentication**: Required (Token).
+- **Success Response**:
+  - **Code**: `200 OK`
+  - **Content**: A list of notification objects.
+
+### Mark All Notifications as Read
+
+- **Endpoint**: `POST /api/notifications/mark-all-as-read/`
+- **Description**: Marks all of the user's notifications as read.
+- **Authentication**: Required (Token).
+- **Success Response**:
+  - **Code**: `204 NO CONTENT`
