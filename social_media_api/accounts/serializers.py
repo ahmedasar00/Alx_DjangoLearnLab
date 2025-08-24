@@ -3,7 +3,7 @@ from .models import CustomerUserModel
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 
-UserModel = get_user_model().objects.create_user
+UserModel = get_user_model().objects.create_user()
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -28,7 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             bio=validated_data("bio"),
             profile_picture=validated_data("profile_picture"),
         )
-        Token.objects.create(user=user)
+        Token.object.create(user=user)
         return user
 
 
