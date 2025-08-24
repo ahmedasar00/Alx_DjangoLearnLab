@@ -9,7 +9,7 @@ class Notification(models.Model):
     recipient = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notifications"
     )
-    author = models.ForeignKey(
+    actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="actions",
@@ -27,5 +27,5 @@ class Notification(models.Model):
 
     def __str__(self):
         if self.target:
-            return f"{self.author.username} {self.verb} your {self.target_content_type.model}"
-        return f"{self.author.username} {self.verb}"
+            return f"{self.actor.username} {self.verb} your {self.target_content_type.model}"
+        return f"{self.actor.username} {self.verb}"
