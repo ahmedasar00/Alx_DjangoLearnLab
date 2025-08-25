@@ -12,6 +12,6 @@ user_unfollow = UserViewSet.as_view({"post": "unfollow"})
 urlpatterns = [
     path("users/", user_list, name="user-list"),
     path("users/<int:user_id>/", user_detail, name="user-detail"),
-    path("users/<int:user_id>/follow/", user_follow, name="user-follow"),
-    path("users/<int:user_id>/unfollow/", user_unfollow, name="user-unfollow"),
+    path("follow/<int:user_id>/", user_follow, name="user-follow"),
+    path("unfollow/<int:user_id>/", user_unfollow, name="user-unfollow"),
 ]
