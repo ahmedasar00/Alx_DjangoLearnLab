@@ -2,7 +2,7 @@ from rest_framework import generics, status, viewsets, permissions
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
-from .models import CustomerUserModel
+from .models import CustomUser
 from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
 from rest_framework.decorators import action
 from notifications.models import Notification
@@ -10,7 +10,7 @@ from notifications.models import Notification
 
 # User Registration
 class RegisterView(generics.CreateAPIView):
-    queryset = CustomerUserModel.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = RegisterSerializer
 
     def perform_create(self, serializer):
@@ -49,7 +49,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     Provides `list` and `retrieve` actions by default.
     """
 
-    queryset = CustomerUserModel.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
