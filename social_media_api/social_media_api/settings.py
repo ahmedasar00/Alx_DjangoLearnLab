@@ -24,12 +24,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # It's recommended to load this from an environment variable for security.
 # The default value provided here is for development ONLY.
 # Example for production: SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-e4w60q0^$0h3y0njhbj2q7rpl6g@w+$rag^8d-3y164-qt+bq0")
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-e4w60q0^$0h3y0njhbj2q7rpl6g@w+$rag^8d-3y164-qt+bq0",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # In production, set the DEBUG environment variable to "False".
 # For example: DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 # In production, add your domain name(s) here.
 # For example: ALLOWED_HOSTS = ['yourdomain.com']
@@ -46,11 +49,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "accounts",
-    "posts",
-    "notifications",
+    # Third-Party Apps
     "rest_framework",
     "rest_framework.authtoken",
+    # Local Apps (Your Project's Apps)
+    "accounts.apps.AccountsConfig",
+    "posts.apps.PostsConfig",
+    "notifications.apps.NotificationsConfig",
 ]
 
 MIDDLEWARE = [
