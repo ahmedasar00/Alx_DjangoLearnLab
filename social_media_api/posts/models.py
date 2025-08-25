@@ -35,8 +35,12 @@ class Like(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
+        related_name="likes",
     )
     post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="likes")
-    create_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    unique_together = ("user", "post")
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "post"], name="unique_like")
+        ]

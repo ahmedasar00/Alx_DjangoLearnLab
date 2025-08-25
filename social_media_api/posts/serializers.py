@@ -22,19 +22,16 @@ class CommentSerializer(serializers.ModelSerializer):
             "author",
             "title",
             "content",
-            "posts",
+            "post",
             "created_at",
             "updated_at",
         ]
-
-    def create(self, validated_data):
-        validated_data["author"] = self.context["request"].user
-        return super().create(validated_data)
 
 
 class PostSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)
+    likes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -44,10 +41,10 @@ class PostSerializer(serializers.ModelSerializer):
             "title",
             "content",
             "comments",
+            "likes_count",
             "created_at",
             "updated_at",
         ]
 
-    def create(self, validated_data):
-        validated_data["author"] = self.context["request"].user
-        return super().create(validated_data)
+    def get_likes_count(self, obj):
+        return obj.likes.count()

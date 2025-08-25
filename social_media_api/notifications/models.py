@@ -18,8 +18,10 @@ class Notification(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     verb = models.CharField(max_length=200)
 
-    target_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    target_object_id = models.PositiveIntegerField()
+    target_content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, null=True, blank=True
+    )
+    target_object_id = models.PositiveIntegerField(null=True, blank=True)
     target = GenericForeignKey("target_content_type", "target_object_id")
 
     class Meta:

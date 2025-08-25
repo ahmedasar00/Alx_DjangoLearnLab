@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os  # Added to access environment variables
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-e4w60q0^$0h3y0njhbj2q7rpl6g@w+$rag^8d-3y164-qt+bq0"
+# It's recommended to load this from an environment variable for security.
+# The default value provided here is for development ONLY.
+# Example for production: SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-e4w60q0^$0h3y0njhbj2q7rpl6g@w+$rag^8d-3y164-qt+bq0")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# In production, set the DEBUG environment variable to "False".
+# For example: DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+# In production, add your domain name(s) here.
+# For example: ALLOWED_HOSTS = ['yourdomain.com']
+# You can also load this from an environment variable.
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -136,10 +145,14 @@ AUTH_USER_MODEL = "accounts.CustomerUserModel"
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
+    # By default, require authentication for all API endpoints.
+    # This is a more secure practice. Public endpoints can be
+    # decorated with @permission_classes([AllowAny]) individually.
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
+        "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
 }
