@@ -14,7 +14,6 @@ from notifications.models import Notification
 class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-    filter_backends = ["Post.objects.filter(author__in=following_users).order_by"]
     search_fields = ["title", "content", "author__username"]
     ordering_fields = ["created_at", "updated_at"]
 
