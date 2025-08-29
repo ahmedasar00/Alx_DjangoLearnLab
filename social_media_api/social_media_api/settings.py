@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os  # Added to access environment variables
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,21 +25,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # It's recommended to load this from an environment variable for security.
 # The default value provided here is for development ONLY.
 # Example for production: SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
-SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY",
-    "django-insecure-e4w60q0^$0h3y0njhbj2q7rpl6g@w+$rag^8d-3y164-qt+bq0",
-)
+SECRET_KEY = os.environ.get("SECRET_KEY", "default-secret-key-for-development")
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # In production, set the DEBUG environment variable to "False".
 # For example: DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+
 
 # In production, add your domain name(s) here.
 # For example: ALLOWED_HOSTS = ['yourdomain.com']
 # You can also load this from an environment variable.
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", ".herokuapp.com"]
 
 # Application definition
 
@@ -66,6 +65,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "social_media_api.urls"
@@ -94,11 +94,17 @@ WSGI_APPLICATION = "social_media_api.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "social_media_api",
+        "USER": "root",
+        "PASSWORD": "root",
+        "HOST": "localhost",
+        "PORT": "3306",
+        "OPTIONS": {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -134,7 +140,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -143,9 +152,10 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-AUTH_USER_MODEL = "accounts.CustomerUserModel"
+AUTH_USER_MODEL = "accounts.CustomUser"
 
 # Django REST Framework settings
+
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
@@ -161,3 +171,6 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ],
 }
+
+
+DEBUG = False
