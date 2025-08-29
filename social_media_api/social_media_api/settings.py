@@ -171,3 +171,6 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ],
 }
+
+
+"DEBUG = False"
