@@ -1,7 +1,4 @@
-from django.shortcuts import get_object_or_404
-
-
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
@@ -42,7 +39,8 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"], url_path="like")
     def like(self, request, pk=None):
-        post = get_object_or_404(Post, pk=pk)
+        post = generics.get_object_or_404(Post, pk=pk)
+
         user = request.user
 
         if post.author == user:
