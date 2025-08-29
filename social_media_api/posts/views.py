@@ -1,3 +1,6 @@
+from django.shortcuts import get_object_or_404
+
+
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -39,7 +42,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"], url_path="like")
     def like(self, request, pk=None):
-        post = self.get_object()
+        post = get_object_or_404(Post, pk=pk)
         user = request.user
 
         if post.author == user:
@@ -48,7 +51,7 @@ class PostViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        like, created = Like.objects.get_or_create(user=request.user, Post=post)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if created:
             # If like does not exist, create it and a notification
