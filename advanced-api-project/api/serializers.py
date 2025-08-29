@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Author, Book
-from django.core.exceptions import ValidationError
 from django.utils import timezone
+
 
 class BookSerializer(serializers.ModelSerializer):
     """
@@ -9,10 +9,13 @@ class BookSerializer(serializers.ModelSerializer):
     It includes custom validation to prevent a book from being published
     in the future.
     """
+
     class Meta:
         model = Book
-        fields = ['id', 'title', 'publication_year', 'author']
-        read_only_fields = ['author'] # The azuthor is set when creating the book via the AuthorSerializer
+        fields = ["id", "title", "publication_year", "author"]
+        read_only_fields = [
+            "author"
+        ]  # The azuthor is set when creating the book via the AuthorSerializer
 
     def validate_publication_year(self, value):
         """
@@ -20,9 +23,10 @@ class BookSerializer(serializers.ModelSerializer):
         """
         current_year = timezone.now().year
         if value > current_year:
-            raise serializers.ValidationError("Publication year cannot be in the future.")
+            raise serializers.ValidationError(
+                "Publication year cannot be in the future."
+            )
         return value
-
 
 
 # Serializer for the Author model
@@ -39,7 +43,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Author
-        fields = ['name', 'books']
+        fields = ["name", "books"]
         # 'fields' defines the fields that will be included in the serialized output.
 
     """

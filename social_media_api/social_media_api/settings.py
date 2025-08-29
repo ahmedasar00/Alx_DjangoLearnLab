@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # The default value provided here is for development ONLY.
 # Example for production: SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 SECRET_KEY = os.environ.get("SECRET_KEY", "default-secret-key-for-development")
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+DEBUG = os.environ.get("DEBUG", "False") == "False"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # In production, set the DEBUG environment variable to "False".
@@ -171,6 +171,3 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ],
 }
-
-
-DEBUG = False
