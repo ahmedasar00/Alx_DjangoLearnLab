@@ -1,5 +1,4 @@
-from rest_framework import viewsets, permissions, filters, generics, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
@@ -19,22 +18,21 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        This view should return a list of all the posts
-        for the currently authenticated user's followed users.
+        This view returns a list of posts for the currently authenticated
+        user's feed (posts from followed users and their own posts).
+        For detail views, it allows access to any post, with permissions
+        handled by IsOwnerOrReadOnly.
         """
         user = self.request.user
 
-        # Return an empty queryset if the user is not authenticated
         if not user.is_authenticated:
             return Post.objects.none()
 
-        # Get the list of users that the current user follows
-        following_users = user.following.all()
-
-        # Filter posts to include only those from followed users,
-        # and order them by creation date (newest first).
-        # This is the line the checker is looking for!
-        return Post.objects.filter(author__in=following_users).order_by("-created_at")
+        if self.action == "list":  # the process list, create, retrieve
+            following_users = user.following.all()
+            # A user's feed should contain posts from followed users and their own posts.
+            return Post.objects.filter(Q(author__in=following_users) | Q(author=user))
+        return Post.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -50,11 +48,17 @@ class PostViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        try:
-            # If like exists, unlike the post
-            like = Like.objects.get(user=user, post=post)
-            like.delete()
+        like, created = Like.objects.get_or_create(user=request.user, Post=post)
 
+        if created:
+            # If like does not exist, create it and a notification
+            Notification.objects.create(
+                recipient=post.author, actor=user, verb="liked your post", target=post
+            )
+            return Response({"status": "Post liked"}, status=status.HTTP_201_CREATED)
+        else:
+            # If like exists, unlike the post and remove notification
+            like.delete()
             # Remove the corresponding notification
             content_type = ContentType.objects.get_for_model(Post)
             Notification.objects.filter(
@@ -64,33 +68,23 @@ class PostViewSet(viewsets.ModelViewSet):
                 target_content_type=content_type,
                 target_object_id=post.id,
             ).delete()
-
             return Response({"status": "Post unliked"}, status=status.HTTP_200_OK)
-        except Like.DoesNotExist:
-            # If like does not exist, create it
-            Like.objects.create(user=user, post=post)
-            # Create a notification for the post author
-            Notification.objects.create(
-                recipient=post.author, actor=user, verb="liked your post", target=post
-            )
-            return Response({"status": "Post liked"}, status=status.HTTP_201_CREATED)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all().order_by("created_at")
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
+    def get_queryset(self):
+        """
+        Optionally restricts the returned comments to a given post,
+        by filtering against a `post` query parameter in the URL.
+        """
+        queryset = Comment.objects.all().order_by("-created_at")
+        post_id = self.request.query_params.get("post")
+        if post_id is not None:
+            queryset = queryset.filter(post_id=post_id)
+        return queryset
+
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-
-
-class FeedView(generics.ListAPIView):
-    serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        following_users = user.following.all()
-
-        return Post.objects.filter(author__in=following_users).order_by()

@@ -7,3 +7,4 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = ["id", "recipient", "actor", "verb", "target", "timestamp"]
         depth = 1
+        # Nested Serializers

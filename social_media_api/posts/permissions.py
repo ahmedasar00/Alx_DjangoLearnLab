@@ -8,10 +8,10 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if (
             request.method in permissions.SAFE_METHODS
-        ):  # S AFE_METHODS = GET, HEAD, OPTINONS <==> Read_only
+        ):  # SAFE_METHODS = GET, HEAD, OPTINONS <==> Read_only
             return True
         if (
             obj.author == request.user
-        ):  # if request not read_only ===> eg: PUT, PATCH, DELETE ===> Cheak author
+        ):  # if request Update or Edit (not read_only) ===> eg: PUT, PATCH, DELETE ===> Cheak author
             return True
         raise PermissionDenied(self.message)

@@ -16,7 +16,7 @@ class Notification(models.Model):
     )
     read = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
-    verb = models.CharField(max_length=200)
+    verb = models.CharField(max_length=200)  # like, comment, follow
 
     target_content_type = models.ForeignKey(
         ContentType, on_delete=models.CASCADE, null=True, blank=True
@@ -30,4 +30,4 @@ class Notification(models.Model):
     def __str__(self):
         if self.target:
             return f"{self.actor.username} {self.verb} your {self.target_content_type.model}"
-        return f"{self.actor.username} {self.verb}"
+        return f"{self.actor.username} {self.verb}"  # ahmed followed or System Notification
